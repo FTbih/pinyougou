@@ -70,4 +70,5 @@ public interface TypeTemplateService {
 
 	public List<Map> findTypeList();
 
+    List<Map> findSpecList(Long id);
 }

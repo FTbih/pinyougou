@@ -1,5 +1,5 @@
  //控制层 
-app.controller('goodsController' ,function($scope,$controller   ,goodsService, uploadService, itemCatService){
+app.controller('goodsController' ,function($scope,$controller   ,goodsService, uploadService, itemCatService, typeTemplateService){
 	
 	$controller('baseController',{$scope:$scope});//继承
 	
@@ -30,7 +30,7 @@ app.controller('goodsController' ,function($scope,$controller   ,goodsService, u
 			}
 		);				
 	}
-	
+
 	//保存 
 	$scope.add=function(){
 		$scope.entity.goodsDesc.introduction=editor.html();
@@ -95,7 +95,7 @@ app.controller('goodsController' ,function($scope,$controller   ,goodsService, u
 		)
 	}
 
-	$scope.entity={goods:{}, goodsDesc:{itemImages:[]}};
+	$scope.entity={goods:{}, goodsDesc:{itemImages:[], customAttributeItems:[{text:{}, value:{}}]}};
 	$scope.addImages=function () {
 
 		$scope.entity.goodsDesc.itemImages.push($scope.image_entity);
@@ -105,5 +105,86 @@ app.controller('goodsController' ,function($scope,$controller   ,goodsService, u
 	$scope.deleImage=function (index) {
 		$scope.entity.goodsDesc.itemImages.splice(index, 1);
 	}
-    
+
+	$scope.findItemList1=function(){
+		itemCatService.findByParentId(0).success(
+			function (response) {
+			$scope.itemsList1 = response;
+		})
+	}
+
+
+	$scope.$watch("entity.goods.category1Id", function (newValue, oldValue) {
+		if(newValue) {
+			itemCatService.findByParentId(newValue).success(
+				function (response) {
+					$scope.itemsList2 = response;
+					$scope.itemsList3 = null;
+				})
+		}
+	})
+
+	$scope.$watch("entity.goods.category2Id", function (newValue, oldValue) {
+		if(newValue) {
+			itemCatService.findByParentId(newValue).success(
+				function (response) {
+					$scope.itemsList3 = response;
+				})
+		}
+	})
+
+	$scope.$watch("entity.goods.category3Id", function (newValue, oldValue) {
+		if(newValue){
+		itemCatService.findOne(newValue).success(
+			function(response){
+				$scope.entity.goods.typeTemplateId=response.typeId; //更新模板ID
+			}
+		);}
+
+
+	})
+
+	//监视entity.goods.category3Id，一旦发生改变，就查询type_template表数据
+	$scope.$watch("entity.goods.typeTemplateId", function (newValue, oldValue) {
+		if(newValue){
+			typeTemplateService.findOne(newValue).success(
+				function (response) {
+					$scope.typeTemplateIds = JSON.parse(response.brandIds);
+					$scope.entity.goodsDesc.customAttributeItems=JSON.parse(response.customAttributeItems);
+				}
+			)
+
+			typeTemplateService.findSpecList(newValue).success(
+				function (response) {
+					$scope.specList=response;
+				}
+			)
+		}
+
+	})
+	// {"attributeName":{}, "attributeValue":[]}
+	$scope.entity={goods:{}, goodsDesc:{specificationItems:[],itemImages:[], customAttributeItems:[{text:{}, value:{}}]}};
+	$scope.Axx=function (event, key, value) {
+		var obj = $scope.isKeyInList($scope.entity.goodsDesc.specificationItems, "attributeName", key);
+		if(obj){
+			if(event.target.checked){
+				obj.attributeValue.push(value);
+			}else{
+				obj.attributeValue.splice(obj.attributeValue.indexOf(value), 1);
+				if(obj.attributeValue.length==0){
+					$scope.entity.goodsDesc.specificationItems.splice($scope.entity.goodsDesc.specificationItems.indexOf(obj), 1);
+				}
+			}
+
+		}else{
+			$scope.entity.goodsDesc.specificationItems.push({"attributeName":key, "attributeValue":[value]})
+		}
+
+	}
+
+
+
+
+
+
 });	

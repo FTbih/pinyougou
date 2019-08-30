@@ -2,6 +2,10 @@ package com.pinyougou.sellergoods.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSON;
+import com.pinyougou.mapper.TbSpecificationOptionMapper;
+import com.pinyougou.pojo.TbSpecificationOption;
+import com.pinyougou.pojo.TbSpecificationOptionExample;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.github.pagehelper.Page;
@@ -24,6 +28,9 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
 
 	@Autowired
 	private TbTypeTemplateMapper typeTemplateMapper;
+
+	@Autowired
+	private TbSpecificationOptionMapper tbSpecificationOptionMapper;
 	
 	/**
 	 * 查询全部
@@ -116,5 +123,29 @@ public class TypeTemplateServiceImpl implements TypeTemplateService {
 	@Override
 	public List<Map> findTypeList() {
 		return typeTemplateMapper.findTypeList();
+	}
+
+
+	@Override
+	public List<Map> findSpecList(Long id) {
+		//我需要查询两张表
+		//第一张表查到[{"id":27,"text":"网络"},{"id":32,"text":"机身内存"}]，将它转化为JSON，然后就可以遍历它
+		//遍历它取到id，通过这个id当成specId去另一张表查询，得到option对象集合
+		//将这个option对象集合变成option：[{}, {}, {}]形式
+		TbTypeTemplate tbTypeTemplate = typeTemplateMapper.selectByPrimaryKey(id);
+		String specIds = tbTypeTemplate.getSpecIds();
+		List<Map> maps = JSON.parseArray(specIds, Map.class);
+		for (Map map : maps) {
+			Object valueId = map.get("id");
+
+			TbSpecificationOptionExample example = new TbSpecificationOptionExample();
+			TbSpecificationOptionExample.Criteria criteria = example.createCriteria();
+			criteria.andSpecIdEqualTo(new Long((Integer)valueId));
+			List<TbSpecificationOption> option = tbSpecificationOptionMapper.selectByExample(example);
+			map.put("option", option);
+
+		}
+
+		return maps;
 	}
 }
