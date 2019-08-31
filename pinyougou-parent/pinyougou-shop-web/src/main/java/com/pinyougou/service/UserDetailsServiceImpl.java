@@ -37,7 +37,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             if(tbSeller.getStatus().equals("0")){
                 return null;
             }else {
-                return new User(tbSeller.getName(), tbSeller.getPassword(), grantedAuthorityList);
+                return new User(tbSeller.getSellerId(), tbSeller.getPassword(), grantedAuthorityList);
             }
         }
         //User的参数（前台传递的username， 数据库中的密码， 用户所具有的角色）

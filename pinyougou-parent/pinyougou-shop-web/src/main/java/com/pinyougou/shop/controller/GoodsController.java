@@ -68,7 +68,17 @@ public class GoodsController {
 	 * @return
 	 */
 	@RequestMapping("/update")
-	public Result update(@RequestBody TbGoods goods){
+	public Result update(@RequestBody Goods goods){
+		//问题来了，商家现在有权限修改别人家的商品，怎么办呢
+		//我们把他登录的sellerId和他要修改的商品的sellerId进行比对
+		//一致了再允许他修改
+		//不一致不啊让他修改
+		String sellerId = SecurityContextHolder.getContext().getAuthentication().getName();//商家的登录sellerId
+		String sellerId1 = goods.getGoods().getSellerId();//商家要修改的商品所属人的sellerId
+		if(!sellerId.equals(sellerId1)){
+			return new Result(false, "非法操作");
+		}
+
 		try {
 			goodsService.update(goods);
 			return new Result(true, "修改成功");
@@ -84,8 +94,8 @@ public class GoodsController {
 	 * @return
 	 */
 	@RequestMapping("/findOne")
-	public TbGoods findOne(Long id){
-		return goodsService.findOne(id);		
+	public Goods findOne(Long id){
+		return goodsService.findOne(id);
 	}
 	
 	/**
@@ -106,14 +116,16 @@ public class GoodsController {
 	
 		/**
 	 * 查询+分页
-	 * @param brand
+	 * @param
 	 * @param page
 	 * @param rows
 	 * @return
 	 */
 	@RequestMapping("/search")
 	public PageResult search(@RequestBody TbGoods goods, int page, int rows  ){
-		return goodsService.findPage(goods, page, rows);		
+        String sellerId = SecurityContextHolder.getContext().getAuthentication().getName();
+        goods.setSellerId(sellerId);
+        return goodsService.findPage(goods, page, rows);
 	}
 	
 }

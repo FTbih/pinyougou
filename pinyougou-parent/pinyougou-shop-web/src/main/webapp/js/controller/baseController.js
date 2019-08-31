@@ -2,7 +2,7 @@ app.controller("baseController", function ($scope){
     //定义分页数据
     $scope.paginationConf = {
         currentPage:1,
-        totalItems:100,
+        totalItems:10,
         itemsPerPage:5,
         perPageOptions:[10,20,30,40,50],
         onChange:function () {
@@ -12,7 +12,7 @@ app.controller("baseController", function ($scope){
 
     //刷新页面数据
     $scope.reloadList=function(){
-        $scope.findPage($scope.paginationConf.currentPage, $scope.paginationConf.itemsPerPage);
+        $scope.search($scope.paginationConf.currentPage, $scope.paginationConf.itemsPerPage);
     }
 
     $scope.selectIds=[];
