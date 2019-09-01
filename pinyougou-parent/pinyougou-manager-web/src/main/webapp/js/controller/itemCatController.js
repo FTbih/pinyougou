@@ -10,7 +10,7 @@ app.controller('itemCatController' ,function($scope,$controller   ,itemCatServic
 				$scope.list=response;
 			}			
 		);
-	}    
+	}
 	
 	//分页
 	$scope.findPage=function(page,rows){			

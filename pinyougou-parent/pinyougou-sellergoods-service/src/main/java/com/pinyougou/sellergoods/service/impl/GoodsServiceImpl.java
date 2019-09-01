@@ -16,6 +16,7 @@ import com.pinyougou.pojo.TbGoodsExample.Criteria;
 import com.pinyougou.sellergoods.service.GoodsService;
 
 import entity.PageResult;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.alibaba.fastjson.JSON.parseObject;
 
@@ -25,6 +26,7 @@ import static com.alibaba.fastjson.JSON.parseObject;
  *
  */
 @Service
+@Transactional
 public class GoodsServiceImpl implements GoodsService {
 
 	@Autowired
@@ -318,9 +320,25 @@ public class GoodsServiceImpl implements GoodsService {
 			}
 	
 		}
-		
+		criteria.andIsDeleteIsNull();
 		Page<TbGoods> page= (Page<TbGoods>)goodsMapper.selectByExample(example);		
 		return new PageResult(page.getTotal(), page.getResult());
+	}
+
+	public void updateStatus(Long[] ids, Integer status){
+		//遍历产品id集合，查询出每个产品
+		for (Long id : ids) {
+			TbGoods tbGoods = goodsMapper.selectByPrimaryKey(id);
+			//将产品的状态修改
+			if(status!=4) {
+				tbGoods.setAuditStatus(status.toString());
+				goodsMapper.updateByPrimaryKey(tbGoods);
+			}else{
+				tbGoods.setIsDelete("1");
+				goodsMapper.updateByPrimaryKey(tbGoods);
+			}
+		}
+
 	}
 	
 }

@@ -11,17 +11,25 @@ app.controller("brandController", function ($scope, $http, brandService, $contro
         })
     }
     //定义静态页面调用的方法
-    $scope.findPage=function (pageNum, pageSize) {
-        //请求服务
-        brandService.findPage(pageNum,pageSize,$scope.searchEntity).success(
-            function (response) {
-                $scope.list = response.rows;
-                $scope.paginationConf.totalItems = response.total;
-            }
-        )
-    }
+    // $scope.findPage=function (pageNum, pageSize) {
+    //     //请求服务
+    //     brandService.findPage(pageNum,pageSize,$scope.searchEntity).success(
+    //         function (response) {
+    //             $scope.list = response.rows;
+    //             $scope.paginationConf.totalItems = response.total;
+    //         }
+    //     )
+    // }
     //定义变量
     $scope.searchEntity={};
+    $scope.search=function(page,rows){
+        brandService.findPage(page,rows,$scope.searchEntity).success(
+            function(response){
+                $scope.list=response.rows;
+                $scope.paginationConf.totalItems=response.total;//更新总记录数
+            }
+        );
+    }
     //定义静态页面调用的方法
     $scope.addBrand=function () {
         var service = null;

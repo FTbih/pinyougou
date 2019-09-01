@@ -27,5 +27,9 @@ app.service("brandService", function ($http) {
     this.findOptionList=function () {
         return $http.get("../brand/selectOptionList.do");
     }
+    //搜索
+    this.search=function(page,rows,searchEntity){
+        return $http.post('../brand/search.do?page='+page+"&rows="+rows, searchEntity);
+    }
 
 })

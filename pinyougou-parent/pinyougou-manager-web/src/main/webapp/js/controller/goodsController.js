@@ -1,5 +1,5 @@
  //控制层 
-app.controller('goodsController' ,function($scope,$controller   ,goodsService){	
+app.controller('goodsController' ,function($scope,$controller   ,goodsService, itemCatService){
 	
 	$controller('baseController',{$scope:$scope});//继承
 	
@@ -64,9 +64,10 @@ app.controller('goodsController' ,function($scope,$controller   ,goodsService){
 			}		
 		);				
 	}
-	
+
+
 	$scope.searchEntity={};//定义搜索对象 
-	
+	$scope.statusList=["未审核", "审核已通过", "审核未通过", "已驳回"];
 	//搜索
 	$scope.search=function(page,rows){			
 		goodsService.search(page,rows,$scope.searchEntity).success(
@@ -76,5 +77,67 @@ app.controller('goodsController' ,function($scope,$controller   ,goodsService){
 			}			
 		);
 	}
-    
+
+	/*
+	查询所有itemCat数据
+	 */
+	$scope.itemsCatList=[];
+	$scope.searchItems=function () {
+		itemCatService.findAll().success(
+			function (response) {
+				for (var i = 0; i < response.length; i++) {
+					$scope.itemsCatList[i] = response[i];
+				}
+			}
+		)
+	}
+
+	/*
+	判断用户点击的是哪个修改状态的按钮
+	 */
+	$scope.statusFun=function(goodsStatus){
+		$scope.goodStatus = goodsStatus;//给状态赋值
+		updateStatus();
+
+
+	}
+
+	/*
+	获取checkbox 的id集合
+	 */
+	updateStatus=function () { //将选中的产品与状态传递给后台
+		goodsService.updateStatus($scope.selectIds, $scope.goodStatus).success(
+			function (response) {
+				if(response.success){
+					//重新查询
+					$scope.reloadList();//重新加载
+					$scope.selectIds=[];
+				}else{
+					alert(response.message);
+				}
+			}
+		)
+	}
+
+	//商品详情页数据回显
+	//1 根据页面Id去后台查询商品数据
+	// $scope.findOne=function(id){
+	// 	var id = $location.search()["id"];
+	// 	if(id == null){
+	// 		return;
+	// 	}
+	// 	goodsService.findOne(id).success(
+	// 		function(response){
+	// 			$scope.entity= response;
+	// 			editor.html(response.goodsDesc.introduction);
+	// 			$scope.entity.goodsDesc.itemImages = JSON.parse(response.goodsDesc.itemImages);
+	// 			$scope.entity.goodsDesc.customAttributeItems = JSON.parse($scope.entity.goodsDesc.customAttributeItems);
+	// 			$scope.entity.goodsDesc.specificationItems = JSON.parse($scope.entity.goodsDesc.specificationItems);
+	// 			for (var i = 0; i < response.itemList.length; i++) {
+	// 				$scope.entity.itemList[i].spec = JSON.parse(response.itemList[i].spec);
+	// 			}
+	// 		}
+	// 	);
+	// }
+
 });	

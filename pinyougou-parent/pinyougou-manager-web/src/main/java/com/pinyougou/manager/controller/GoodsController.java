@@ -1,6 +1,7 @@
 package com.pinyougou.manager.controller;
 import java.util.List;
 
+import com.pinyougou.grouppojo.Goods;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,16 +48,16 @@ public class GoodsController {
 	 * @param goods
 	 * @return
 	 */
-	@RequestMapping("/update")
-	public Result update(@RequestBody TbGoods goods){
-		try {
-			goodsService.update(goods);
-			return new Result(true, "修改成功");
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new Result(false, "修改失败");
-		}
-	}	
+//	@RequestMapping("/update")
+//	public Result update(@RequestBody TbGoods goods){
+//		try {
+//			goodsService.update(goods);
+//			return new Result(true, "修改成功");
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return new Result(false, "修改失败");
+//		}
+//	}
 	
 	/**
 	 * 获取实体
@@ -64,7 +65,7 @@ public class GoodsController {
 	 * @return
 	 */
 	@RequestMapping("/findOne")
-	public TbGoods findOne(Long id){
+	public Goods findOne(Long id){
 		return goodsService.findOne(id);		
 	}
 	
@@ -86,7 +87,7 @@ public class GoodsController {
 	
 		/**
 	 * 查询+分页
-	 * @param brand
+	 * @param
 	 * @param page
 	 * @param rows
 	 * @return
@@ -95,5 +96,16 @@ public class GoodsController {
 	public PageResult search(@RequestBody TbGoods goods, int page, int rows  ){
 		return goodsService.findPage(goods, page, rows);		
 	}
+
+    @RequestMapping("/updateStatus")
+    public Result updateStatus(@RequestBody Long[] ids, Integer status){
+        try {
+            goodsService.updateStatus(ids, status);
+            return new Result(true, "删除成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result(false, "删除失败");
+        }
+    }
 	
 }
