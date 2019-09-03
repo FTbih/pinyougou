@@ -13,6 +13,8 @@
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/fastDFS/pom.xml" />
+        <option value="$PROJECT_DIR$/springredis/pom.xml" />
+        <option value="$PROJECT_DIR$/solr-Demo/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">

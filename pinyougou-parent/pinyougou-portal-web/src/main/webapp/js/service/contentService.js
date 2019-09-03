@@ -1,7 +1,7 @@
 app.service("contentService", function ($http) {
 
     this.findByCategoryId=function (id) {
-        $http.get("../content/findByCategoryId?id="+id)
+        return $http.get("../content/findByCategoryId.do?id="+id)
     }
 
 })
